@@ -46,3 +46,9 @@ uint32_t deleteMediumSprite(uint32_t spriteIdx);
  * @return 1 on success
 */
 uint32_t writeIntToScreen(int num);
+
+/**
+ * Returns the and interrupt for the command status register
+ * @return Video Interrupt counter
+*/
+uint32_t getCommandStatus(void);

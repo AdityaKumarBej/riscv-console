@@ -19,6 +19,7 @@
 
 volatile int global = 42;
 volatile uint32_t controller_status = 0;
+volatile uint32_t command_status = 0;
 volatile uint32_t videoToggle = 0;
 volatile uint32_t vidIntCtr = 0;
 volatile int sprite_color = 1;  // 1 for green, 2 for red
@@ -50,6 +51,8 @@ void setUpMediumSprites() {
 
 void beginTheGUI();
 
+void switchScreen();
+
 int moveBox() {
     int a = 4;
     int b = 12;
@@ -65,6 +68,10 @@ int moveBox() {
         global = getTicks();
         if(global != last_global){
             controller_status = getControllerStatus();
+            command_status = getCommandStatus();
+            if (command_status) {
+                switchScreen();
+            }
             if(controller_status){
                 // Update sprite position based on controller_status
                 if(controller_status & 0x1 && x_pos - SPEED_INCREASE >= 0){
@@ -144,4 +151,9 @@ void toggleSpriteColor(void) {
 int main() {
     moveBox();
     return 0;
+}
+
+void switchScreen() {
+    *MODE_REGISTER = 0;
+    printError("Command button pressed. Press me again to go back to video");
 }

@@ -16,7 +16,7 @@ _start:
     
 
 .section .text, "ax"
-.global getTicks, getControllerStatus, getVideoToggle, getVidIntCtr
+.global getTicks, getControllerStatus, getVideoToggle, getVidIntCtr, getCommandStatus
 getTicks:
     li a5, 0
     ecall
@@ -29,4 +29,6 @@ getVideoToggle:
 getVidIntCtr:
     li a5, 3
     ecall
-
+getCommandStatus:
+    li a5, 4
+    ecall

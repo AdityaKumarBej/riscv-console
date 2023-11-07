@@ -36,6 +36,7 @@ __attribute__((always_inline)) inline void csr_disable_interrupts(void){
 #define MTIMECMP_LOW    (*((volatile uint32_t *)0x40000010))
 #define MTIMECMP_HIGH   (*((volatile uint32_t *)0x40000014))
 #define CONTROLLER      (*((volatile uint32_t *)0x40000018))
+#define COMMAND         (*((volatile uint32_t *)0x40000028))
 
 volatile uint32_t *ENABLE_INTERRUPT = (volatile uint32_t *)(0x40000000);
 volatile uint32_t *PENDING_INTERRUPT = (volatile uint32_t *)(0x40000004);
@@ -64,6 +65,7 @@ extern volatile int global;
 extern volatile uint32_t controller_status;
 extern volatile uint32_t videoToggle;
 extern volatile uint32_t vidIntCtr;
+extern volatile uint32_t command_status;
 
 void c_interrupt_handler(uint32_t mcause){
     uint64_t NewCompare = (((uint64_t)MTIMECMP_HIGH)<<32) | MTIMECMP_LOW;
@@ -72,6 +74,7 @@ void c_interrupt_handler(uint32_t mcause){
     MTIMECMP_LOW = NewCompare;
     global++;
     controller_status = CONTROLLER;
+    command_status = COMMAND;
 
     if ((mcause == 0x8000000B)) {
         //VIDEO INTERRUPT
@@ -99,5 +102,8 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     }
     else if(call == 3){
         return vidIntCtr;
+    }
+    else if (call == 4){
+        return COMMAND;
     }
 }
