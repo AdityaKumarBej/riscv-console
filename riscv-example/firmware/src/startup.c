@@ -87,7 +87,7 @@ void c_interrupt_handler(uint32_t mcause){
         machine_timer++;
     }
 
-    if (mcause == 0x8000000B) {
+    // if (mcause == 0x8000000B) {
         // CARTRIDGE INTERRUPT
         if ((*PENDING_INTERRUPT) & 1) {
             cartridge_status++;
@@ -103,7 +103,7 @@ void c_interrupt_handler(uint32_t mcause){
             command_status++;
             *PENDING_INTERRUPT = *PENDING_INTERRUPT | 0x1 << 2;
         }
-    }
+    // }
 }
 
 uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t call){
