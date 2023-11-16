@@ -1,32 +1,46 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "api.h"
+#include "../../utils/Constants.h"
+#include "../../utils/PrintUtils.h"
+#include "../../utils/VideoMemory.h"
 
 volatile int global = 42;
 volatile uint32_t controller_status = 0;
 volatile uint32_t command_status = 0;
 volatile uint32_t videoToggle = 0;
 volatile uint32_t vidIntCtr = 0;
-volatile char *VIDEO_MEMORY = (volatile char *)(0x50000000 + 0xF4800);
-volatile uint32_t *CartridgeStatus = (volatile uint32_t *)(0x4000001C);
+volatile uint32_t machine_timer = 0;
+volatile uint32_t cartridge_status = 0;
+volatile struct VideoMemoryData* videoMemoryData;
+
+
 typedef void (*FunctionPtr)(void);
 
 int main() {
-    int a = 4;
-    int b = 12;
-    int last_global = 42;
-    int x_pos = 12;
-    char *Buffer = malloc(32);
-    strcpy(Buffer,"OS STARTED!!! Please insert a cartridge");
-    strcpy((char *)VIDEO_MEMORY,Buffer);
+  int a = 4;
+  int b = 12;
+  int last_global = 42;
+  int x_pos = 12;
+  int prev_machine_timer = 0;
+  int prev_command_ctr = 0;
 
-    while (1){
-        if(*CartridgeStatus & 0x1){
-            ((FunctionPtr)((*CartridgeStatus) & 0xFFFFFFFC))();
-        }
+  videoMemoryData = initializeVideoMemory();
+
+  printmnl("OS has started");
+  printmnl("Hello from me");
+
+  while (1){
+    if (prev_command_ctr != command_status) {
+      printmnl("Command button pressed");
+      prev_command_ctr = command_status;
     }
-
-    return 0;
+    if(*CartridgeStatus & 0x1){
+      ((FunctionPtr)((*CartridgeStatus) & 0xFFFFFFFC))();
+    }
+  }
+  return 0;
 }
 
 extern char _heap_base[];

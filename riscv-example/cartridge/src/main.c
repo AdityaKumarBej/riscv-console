@@ -15,6 +15,8 @@
 #define MTIMECMP_LOW (*((volatile uint32_t *)0x40000010))
 #define MTIMECMP_HIGH (*((volatile uint32_t *)0x40000014))
 
+uint32_t getCommandStatus(void);
+
 //
 
 volatile int global = 42;

@@ -1,4 +1,7 @@
 #include <stdint.h>
+#include <string.h>
+#include "../../utils/PrintUtils.h"
+
 
 extern uint8_t _erodata[];
 extern uint8_t _data[];
@@ -7,6 +10,8 @@ extern uint8_t _sdata[];
 extern uint8_t _esdata[];
 extern uint8_t _bss[];
 extern uint8_t _ebss[];
+extern volatile char *VIDEO_MEMORY;
+
 
 // Adapted from https://stackoverflow.com/questions/58947716/how-to-interact-with-risc-v-csrs-by-using-gcc-c-code
 __attribute__((always_inline)) inline uint32_t csr_mstatus_read(void){
@@ -36,7 +41,6 @@ __attribute__((always_inline)) inline void csr_disable_interrupts(void){
 #define MTIMECMP_LOW    (*((volatile uint32_t *)0x40000010))
 #define MTIMECMP_HIGH   (*((volatile uint32_t *)0x40000014))
 #define CONTROLLER      (*((volatile uint32_t *)0x40000018))
-#define COMMAND         (*((volatile uint32_t *)0x40000028))
 
 volatile uint32_t *ENABLE_INTERRUPT = (volatile uint32_t *)(0x40000000);
 volatile uint32_t *PENDING_INTERRUPT = (volatile uint32_t *)(0x40000004);
@@ -66,6 +70,9 @@ extern volatile uint32_t controller_status;
 extern volatile uint32_t videoToggle;
 extern volatile uint32_t vidIntCtr;
 extern volatile uint32_t command_status;
+extern volatile uint32_t machine_timer;
+extern volatile uint32_t cartridge_status;
+
 
 void c_interrupt_handler(uint32_t mcause){
     uint64_t NewCompare = (((uint64_t)MTIMECMP_HIGH)<<32) | MTIMECMP_LOW;
@@ -74,18 +81,27 @@ void c_interrupt_handler(uint32_t mcause){
     MTIMECMP_LOW = NewCompare;
     global++;
     controller_status = CONTROLLER;
-    command_status = COMMAND;
 
-    if ((mcause == 0x8000000B)) {
+    // MACHINE TIMER INTERRUPT
+    if (mcause == 0x80000007) {
+        machine_timer++;
+    }
+
+    if (mcause == 0x8000000B) {
+        // CARTRIDGE INTERRUPT
+        if ((*PENDING_INTERRUPT) & 1) {
+            cartridge_status++;
+            *PENDING_INTERRUPT = *PENDING_INTERRUPT | 0x1;
+        }
         //VIDEO INTERRUPT
-        if (((*ENABLE_INTERRUPT >> 1) & 1) && ((*PENDING_INTERRUPT >> 1) & 1)) {
+        if ((*PENDING_INTERRUPT >> 1) & 1) {
             vidIntCtr++;
-            *PENDING_INTERRUPT = 2;
+            *PENDING_INTERRUPT = *PENDING_INTERRUPT | 0x1 << 1;
         }
         //COMMAND INTERRUPT
-        if (((*ENABLE_INTERRUPT >> 2) & 1) && ((*PENDING_INTERRUPT >> 2) & 1)) {
-            videoToggle++;
-            *PENDING_INTERRUPT = 4;
+        if ((*PENDING_INTERRUPT >> 2) & 1) {
+            command_status++;
+            *PENDING_INTERRUPT = *PENDING_INTERRUPT | 0x1 << 2;
         }
     }
 }
@@ -100,10 +116,10 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     else if(call == 2){
         return videoToggle;
     }
-    else if(call == 3){
+    else if(call == 13){
         return vidIntCtr;
     }
     else if (call == 4){
-        return COMMAND;
+        return command_status;
     }
 }
