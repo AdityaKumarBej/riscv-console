@@ -13,6 +13,8 @@ INC_DIR = ./include
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 BIN_DIR = ./bin
+UTILS_DIR = ../utils
+INTER_DIR = ../interrupts
 
 DEBUG_MODE=TRUE
 
@@ -35,6 +37,10 @@ TARGET_NAME = riscv-console-example
 TARGET_OBJS =   $(OBJ_DIR)/main.o               \
                 $(OBJ_DIR)/crt0.o               \
                 $(OBJ_DIR)/startup.o						\
+								$(OBJ_DIR)/PrintUtils.o					\
+								$(OBJ_DIR)/VideoMemory.o				\
+								$(OBJ_DIR)/Constants.o					\
+								$(OBJ_DIR)/Interrupts.o					\
 								
 
 all: directories $(BIN_DIR)/$(TARGET_NAME)
@@ -47,6 +53,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(UTILS_DIR)/%.c
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(INTER_DIR)/%.c
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
 	
 directories: $(OBJ_DIR) $(BIN_DIR)

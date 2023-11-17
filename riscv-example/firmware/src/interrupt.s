@@ -1,5 +1,5 @@
 .section .text, "ax"
-.global _interrupt_handler
+.global _interrupt_handler, _system_call
 _interrupt_handler:
     csrw    mscratch,ra
     csrr    ra,mcause
@@ -37,6 +37,7 @@ _interrupt_handler:
     lw	    a5,0(sp)
     addi    sp,sp,44
     mret
+
 _system_call:
     csrr    ra,mscratch
     csrw    mepc,ra
@@ -48,3 +49,21 @@ _system_call:
     call    c_system_call
     csrr    gp,mscratch
     mret
+
+.section .text, "ax"
+.global getTicks, getControllerStatus, getVideoToggle, getVidIntCtr, getCommandStatus
+getTicks:
+    li a5, 0
+    ecall
+getControllerStatus:
+    li a5, 1
+    ecall
+getVideoToggle:
+    li a5, 2
+    ecall
+getVidIntCtr:
+    li a5, 3
+    ecall
+getCommandStatus:
+    li a5, 4
+    ecall

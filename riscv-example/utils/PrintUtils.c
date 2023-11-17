@@ -60,20 +60,22 @@ void printmnl(char* message) {
 
 void writeCharToVideoMemory(char* message, int newLine) {
   changeModeToWrite();
-  int video_pos = 0;
-  int message_pos = 0;
+  int videoPos = 0;
+  int messagePos = 0;
   int startingLine = 0;
+  int messageLength =  strlen(message);
   if (newLine == 1) {
     startingLine = (videoMemoryData->numOfLines + 1) * 64;
     videoMemoryData->numOfLines++;
   }
-  video_pos = startingLine;
-  while (message_pos < strlen(message)) {
-    VIDEO_MEMORY[video_pos] = message[message_pos];
-    video_pos++;
-    message_pos++;
-    videoMemoryData->currentCharPos = video_pos;
-  }
+  videoPos = startingLine;
+  VIDEO_MEMORY[videoPos] = 'h';
+
+  // while (messagePos < messageLength) {
+  //   VIDEO_MEMORY[videoPos] = message[messagePos];
+  //   videoPos++;
+  //   messagePos++;
+  //   videoMemoryData->currentCharPos = videoPos;
+  // }
 }
 
-// asdfasdf

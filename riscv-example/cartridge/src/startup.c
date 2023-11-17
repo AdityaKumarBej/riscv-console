@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "../../utils/Constants.h"
 
 extern uint8_t _erodata[];
 extern uint8_t _data[];
@@ -31,11 +32,11 @@ __attribute__((always_inline)) inline void csr_disable_interrupts(void){
     asm volatile ("csrci mstatus, 0x8");
 }
 
-#define MTIME_LOW       (*((volatile uint32_t *)0x40000008))
-#define MTIME_HIGH      (*((volatile uint32_t *)0x4000000C))
-#define MTIMECMP_LOW    (*((volatile uint32_t *)0x40000010))
-#define MTIMECMP_HIGH   (*((volatile uint32_t *)0x40000014))
-#define CONTROLLER      (*((volatile uint32_t *)0x40000018))
+extern volatile uint32_t *MTIME_LOW;
+extern volatile uint32_t *MTIME_HIGH;
+extern volatile uint32_t *MTIMECMP_LOW;
+extern volatile uint32_t *MTIMECMP_HIGH;
+extern volatile uint32_t *CONTROLLER;
 
 void init(void){
     uint8_t *Source = _erodata;
@@ -50,17 +51,35 @@ void init(void){
     while(Base < End){
         *Base++ = 0;
     }
+    
+    csr_write_mie(0x888);       // Enable all interrupt soruces
+    csr_enable_interrupts();    // Global interrupt enable
+    *MTIMECMP_LOW = 1;
+    *MTIMECMP_HIGH = 0;
 }
 
 extern volatile int global;
 extern volatile uint32_t controller_status;
+extern volatile uint32_t videoToggle;
+extern volatile uint32_t vidIntCtr;
+extern volatile uint32_t commandStatus;
+extern volatile uint32_t machineTimer;
+extern volatile uint32_t cartridgeStatus;
 
-void c_interrupt_handler(void){
-    uint64_t NewCompare = (((uint64_t)MTIMECMP_HIGH)<<32) | MTIMECMP_LOW;
-    NewCompare += 100;
-    MTIMECMP_HIGH = NewCompare>>32;
-    MTIMECMP_LOW = NewCompare;
-    global++;
-    controller_status = CONTROLLER;
+uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t call){
+    if(call == 0){
+        return global;
+    }
+    else if(call == 1){
+        return *CONTROLLER;
+    }
+    else if(call == 2){
+        return videoToggle;
+    }
+    else if(call == 13){
+        return vidIntCtr;
+    }
+    else if (call == 4){
+        return commandStatus;
+    }
 }
-

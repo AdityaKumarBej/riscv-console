@@ -4,34 +4,33 @@
 #include "main.h"
 #include "api.h"
 #include <stdlib.h>
-
-//
+#include "../../utils/Constants.h"
+#include "../../utils/PrintUtils.h"
+#include "../../utils/VideoMemory.h"
 // Timer constants
 #define TIMER_INTERVAL 3  
 
-// Memory-mapped timer registers
-#define MTIME_LOW (*((volatile uint32_t *)0x40000008))
-#define MTIME_HIGH (*((volatile uint32_t *)0x4000000C))
-#define MTIMECMP_LOW (*((volatile uint32_t *)0x40000010))
-#define MTIMECMP_HIGH (*((volatile uint32_t *)0x40000014))
+extern volatile uint32_t *MTIME_LOW;
+extern volatile char     *VIDEO_MEMORY;
+extern volatile uint32_t *MTIME_HIGH;
+extern volatile uint32_t *MTIMECMP_LOW;
+extern volatile uint32_t *MTIMECMP_HIGH;
+extern volatile uint32_t *CONTROLLER;
+extern volatile uint32_t *MODE_REGISTER;
 
-uint32_t getCommandStatus(void);
+extern volatile uint32_t *MEDIUM_PALETTE;
+extern volatile uint32_t *MEDIUM_CONTROL;
+extern volatile uint8_t  *MEDIUM_DATA;
+extern volatile uint32_t *VIDEO_MODE;
 
-//
 
 volatile int global = 42;
-volatile uint32_t controller_status = 0;
-volatile uint32_t command_status = 0;
+volatile uint32_t controllerStatus = 0;
+volatile uint32_t commandStatus = 0;
 volatile uint32_t videoToggle = 0;
 volatile uint32_t vidIntCtr = 0;
 volatile int sprite_color = 1;  // 1 for green, 2 for red
-
-volatile char *VIDEO_MEMORY = (volatile char *)(0x50000000 + 0xF4800);
-volatile uint32_t *MODE_REGISTER = (volatile uint32_t *)(0x500F6780);
-volatile uint32_t *MEDIUM_PALETTE = (volatile uint32_t *)(0x500F2000);
-volatile uint32_t *MEDIUM_CONTROL = (volatile uint32_t *)(0x500F5F00);
-volatile uint8_t *MEDIUM_DATA = (volatile uint8_t *)(0x500D0000);
-volatile uint32_t *VIDEO_MODE = (volatile uint32_t *)(0x500FF414);
+volatile struct VideoMemoryData* videoMemoryData;
 
 void toggleSpriteColor(void);
 void printError(char* errorMessage);
@@ -62,47 +61,55 @@ int moveBox() {
     int x_pos = 0;
     int y_pos = 0; // Y position of the sprite, now declared
     int countdown = 1;
+    int prevCommandStatus = 0;
+    videoMemoryData = initializeVideoMemory();
 
-    *VIDEO_MODE = 1; // VIDEO MODE ON
-    beginTheGUI();
+    // beginTheGUI();
+    clearVideoMemory();
+    printmnl("Hello from the cartridge");
 
     while (1) {
         global = getTicks();
-        if(global != last_global){
-            controller_status = getControllerStatus();
-            command_status = getCommandStatus();
-            if (command_status) {
-                switchScreen();
-            }
-            if(controller_status){
-                // Update sprite position based on controller_status
-                if(controller_status & 0x1 && x_pos - SPEED_INCREASE >= 0){
-                    x_pos -= SPEED_INCREASE;
-                }
-                if(controller_status & 0x2 && y_pos - SPEED_INCREASE >= 0){
-                    y_pos -= SPEED_INCREASE; // Updated for Y position
-                }
-                if(controller_status & 0x4 && y_pos + SPEED_INCREASE <= MAX_Y){
-                    y_pos += SPEED_INCREASE; // Updated for Y position
-                }
-                if(controller_status & 0x8 && x_pos + SPEED_INCREASE <= MAX_X){
-                    x_pos += SPEED_INCREASE;
-                }
-                // Update the sprite control registers with the new position
-                MEDIUM_CONTROL[0] = mediumControlSetter(0, x_pos, y_pos, 0, 0);
-            }
-            last_global = global;
+        if (prevCommandStatus != commandStatus) {
+            printmnl("This is from the command");
+            prevCommandStatus = commandStatus;
         }
-        countdown--;
-        if(!countdown){
-            global++;
-            controller_status = (*((volatile uint32_t *)0x40000018));
-            countdown = 100000;
-        }
-        // Check for timer interrupt and toggle sprite color
-        if (MTIME_LOW >= MTIMECMP_LOW && MTIME_HIGH >= MTIMECMP_HIGH) {
-            toggleSpriteColor();
-        }
+        
+        // if(global != last_global){
+        //     controller_status = getControllerStatus();
+        //     command_status = getCommandStatus();
+        //     if (command_status) {
+        //         switchScreen();
+        //     }
+        //     if(controller_status){
+        //         // Update sprite position based on controller_status
+        //         if(controller_status & 0x1 && x_pos - SPEED_INCREASE >= 0){
+        //             x_pos -= SPEED_INCREASE;
+        //         }
+        //         if(controller_status & 0x2 && y_pos - SPEED_INCREASE >= 0){
+        //             y_pos -= SPEED_INCREASE; // Updated for Y position
+        //         }
+        //         if(controller_status & 0x4 && y_pos + SPEED_INCREASE <= MAX_Y){
+        //             y_pos += SPEED_INCREASE; // Updated for Y position
+        //         }
+        //         if(controller_status & 0x8 && x_pos + SPEED_INCREASE <= MAX_X){
+        //             x_pos += SPEED_INCREASE;
+        //         }
+        //         // Update the sprite control registers with the new position
+        //         MEDIUM_CONTROL[0] = mediumControlSetter(0, x_pos, y_pos, 0, 0);
+        //     }
+        //     last_global = global;
+        // }
+        // countdown--;
+        // if(!countdown){
+        //     global++;
+        //     controller_status = (*((volatile uint32_t *)0x40000018));
+        //     countdown = 100000;
+        // }
+        // // Check for timer interrupt and toggle sprite color
+        // if (MTIME_LOW >= MTIMECMP_LOW && MTIME_HIGH >= MTIMECMP_HIGH) {
+        //     toggleSpriteColor();
+        // }
     }
     return 0;
 }
@@ -143,10 +150,10 @@ void toggleSpriteColor(void) {
     }
 
     // Set the next timer interrupt
-    MTIMECMP_LOW = MTIME_LOW + TIMER_INTERVAL;
-    if (MTIMECMP_LOW < TIMER_INTERVAL) {
+    *MTIMECMP_LOW = *MTIME_LOW + TIMER_INTERVAL;
+    if (*MTIMECMP_LOW < TIMER_INTERVAL) {
         // Handle carry
-        MTIMECMP_HIGH += 1;
+        *MTIMECMP_HIGH += 1;
     }
 }
 
