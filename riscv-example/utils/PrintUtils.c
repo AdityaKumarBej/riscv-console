@@ -5,6 +5,8 @@
 #include "VideoMemory.h"
 #include "Constants.h"
 
+uint32_t getVideoMemoryDataSystemCall(void);
+
 void* growStringMemory(char* result, int current_size) {
   int new_size = current_size * 2;
   char* new_mem = (char*)malloc(new_size);
@@ -49,6 +51,7 @@ void clearVideoMemory() {
       VIDEO_MEMORY[i*64+j] = 0;
     }
   }
+  struct VideoMemoryData* videoMemoryData = (struct VideoMemoryData*)getVideoMemoryDataSystemCall();
   videoMemoryData->numOfLines = -1;
   videoMemoryData->numOfChars = 0;
   videoMemoryData->currentCharPos = 0;
@@ -60,22 +63,21 @@ void printmnl(char* message) {
 
 void writeCharToVideoMemory(char* message, int newLine) {
   changeModeToWrite();
+  struct VideoMemoryData* videoMemoryData = (struct VideoMemoryData*) getVideoMemoryDataSystemCall();
   int videoPos = 0;
   int messagePos = 0;
   int startingLine = 0;
   int messageLength =  strlen(message);
   if (newLine == 1) {
-    startingLine = (videoMemoryData->numOfLines + 1) * 64;
+    startingLine = (videoMemoryData->numOfLines+1)*64;
     videoMemoryData->numOfLines++;
   }
   videoPos = startingLine;
-  VIDEO_MEMORY[videoPos] = 'h';
-
-  // while (messagePos < messageLength) {
-  //   VIDEO_MEMORY[videoPos] = message[messagePos];
-  //   videoPos++;
-  //   messagePos++;
-  //   videoMemoryData->currentCharPos = videoPos;
-  // }
+  while (messagePos < messageLength) {
+    VIDEO_MEMORY[videoPos] = message[messagePos];
+    videoPos++;
+    messagePos++;
+    videoMemoryData->currentCharPos = videoPos;
+  }
 }
 

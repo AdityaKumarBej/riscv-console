@@ -9,7 +9,7 @@ struct VideoMemoryData {
   int numOfChars;
   int currentCharPos;
 };
-
 struct VideoMemoryData* initializeVideoMemory();
+struct VideoMemoryData* getVideoMemoryData();
 
 #endif

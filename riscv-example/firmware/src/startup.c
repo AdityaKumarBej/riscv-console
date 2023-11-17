@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "../../utils/Constants.h"
+#include "../../utils/VideoMemory.h"
 
 extern uint8_t _erodata[];
 extern uint8_t _data[];
@@ -81,5 +82,8 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     }
     else if (call == 4){
         return commandStatus;
+    }
+    else if (call == 5){
+        return getVideoMemoryData();
     }
 }

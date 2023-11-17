@@ -5,7 +5,6 @@
 extern volatile char *VIDEO_MEMORY;
 extern volatile uint32_t *CartridgeStatus;
 extern volatile uint32_t *MODE_REGISTER;
-extern volatile struct VideoMemoryData* videoMemoryData;
 extern volatile uint32_t *MTIME_LOW;
 extern volatile uint32_t *MTIME_HIGH;
 extern volatile uint32_t *MTIMECMP_LOW;

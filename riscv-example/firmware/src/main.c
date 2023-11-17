@@ -11,6 +11,7 @@ uint32_t getControllerStatus(void);
 uint32_t getVideoToggle(void);
 uint32_t getVidIntCtr(void);
 uint32_t getCommandStatus(void);
+uint32_t getVideoMemory(void);
 
 volatile int global = 42;
 volatile uint32_t controllerStatus = 0;
@@ -19,7 +20,6 @@ volatile uint32_t videoToggle = 0;
 volatile uint32_t vidIntCtr = 0;
 volatile uint32_t machineTimer = 0;
 volatile uint32_t cartridgeStatus = 0;
-volatile struct VideoMemoryData* videoMemoryData;
 
 typedef void (*FunctionPtr)(void);
 
@@ -31,7 +31,6 @@ int main() {
   int prevMachineTimer = 0;
   int prevCommandStat = 0;
 
-  videoMemoryData = initializeVideoMemory();
 
   printmnl("OS has started");
   printmnl("Hello from me");

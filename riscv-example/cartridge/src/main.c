@@ -30,7 +30,6 @@ volatile uint32_t commandStatus = 0;
 volatile uint32_t videoToggle = 0;
 volatile uint32_t vidIntCtr = 0;
 volatile int sprite_color = 1;  // 1 for green, 2 for red
-volatile struct VideoMemoryData* videoMemoryData;
 
 void toggleSpriteColor(void);
 void printError(char* errorMessage);
@@ -62,10 +61,9 @@ int moveBox() {
     int y_pos = 0; // Y position of the sprite, now declared
     int countdown = 1;
     int prevCommandStatus = 0;
-    videoMemoryData = initializeVideoMemory();
 
     // beginTheGUI();
-    clearVideoMemory();
+    
     printmnl("Hello from the cartridge");
 
     while (1) {

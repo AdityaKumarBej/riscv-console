@@ -1,6 +1,8 @@
 #include "VideoMemory.h"
 #include <stdlib.h>
 
+struct VideoMemoryData* videoMemoryData;
+
 struct VideoMemoryData* initializeVideoMemory() {
   struct VideoMemoryData* defaultData = malloc(sizeof(struct VideoMemoryData)); 
   defaultData->maxCharWidth = 64;
@@ -11,4 +13,11 @@ struct VideoMemoryData* initializeVideoMemory() {
   defaultData->currentCharPos = 0;
   
   return defaultData;
+}
+
+struct VideoMemoryData* getVideoMemoryData() {
+  if (videoMemoryData == NULL) {
+    videoMemoryData = initializeVideoMemory();
+  }
+  return videoMemoryData;
 }

@@ -65,21 +65,3 @@ extern volatile uint32_t vidIntCtr;
 extern volatile uint32_t commandStatus;
 extern volatile uint32_t machineTimer;
 extern volatile uint32_t cartridgeStatus;
-
-uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t call){
-    if(call == 0){
-        return global;
-    }
-    else if(call == 1){
-        return *CONTROLLER;
-    }
-    else if(call == 2){
-        return videoToggle;
-    }
-    else if(call == 13){
-        return vidIntCtr;
-    }
-    else if (call == 4){
-        return commandStatus;
-    }
-}
