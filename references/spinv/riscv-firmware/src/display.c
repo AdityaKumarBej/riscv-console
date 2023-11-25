@@ -5,16 +5,16 @@
 #define SMALL_SPRITE_STRIDE 16
 #define LARGE_SPRITE_STRIDE 64
 
-volatile uint32_t *VIDEO_MODE_CONTROL = (volatile uint32_t *)(0x500FF414);
-volatile char *TEXT_MEMORY = (volatile char *)(0x500FE800);
-volatile uint32_t *SPRITE_PALETTES = (volatile uint32_t *)(0x500FD000);
-volatile uint8_t *SMALL_SPRITE_DATA = (volatile uint8_t *)(0x500F4000);
-volatile uint32_t *SMALL_SPRITE_CONTROL = (volatile uint32_t *)(0x500FF214);
-volatile uint8_t *LARGE_SPRITE_DATA = (volatile uint8_t *)(0x500B4000);
-volatile uint32_t *LARGE_SPRITE_CONTROL = (volatile uint32_t *)(0x500FF114);
-volatile uint32_t *BACKGROUND_PALETTES = (volatile uint32_t *)(0x500FC000);
+volatile uint32_t *VIDEO_MODE_CONTROL = (volatile uint32_t *)(0x500F6780);
+volatile char *TEXT_MEMORY = (volatile char *)(0x500F4800);
+volatile uint32_t *SPRITE_PALETTES = (volatile uint32_t *)(0x500F2000); //0x500F1000 large // 0x500F2000 medium // 0x500F3000 small
+volatile uint8_t *SMALL_SPRITE_DATA = (volatile uint8_t *)(0x500E0000);
+volatile uint32_t *SMALL_SPRITE_CONTROL = (volatile uint32_t *)(0x500F6300);
+volatile uint8_t *LARGE_SPRITE_DATA = (volatile uint8_t *)(0x50090000);
+volatile uint32_t *LARGE_SPRITE_CONTROL = (volatile uint32_t *)(0x500F5B00);
+volatile uint32_t *BACKGROUND_PALETTES = (volatile uint32_t *)(0x500F0000);
 volatile uint8_t *BACKGROUND_DATA = (volatile uint8_t *)(0x50000000);
-volatile uint32_t *BACKGROUND_CONTROL = (volatile uint32_t *)(0x500FF100);
+volatile uint32_t *BACKGROUND_CONTROL = (volatile uint32_t *)(0x500F5A00);
 
 uint16_t smallSpriteCount, largeSpriteCount, backgroundCount;
 

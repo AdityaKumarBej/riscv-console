@@ -20,13 +20,16 @@ _start:
 getTicks:
     li a5, 0
     ecall
+    ret
 getControllerStatus:
     li a5, 1
     ecall
+    ret
 getVideoToggle:
     li a5, 2
     ecall
+    ret
 getVidIntCtr:
     li a5, 3
     ecall
-
+    ret
