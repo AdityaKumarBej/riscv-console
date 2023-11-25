@@ -41,7 +41,7 @@ class CElfLoad{
         std::unordered_set< uint16_t > DGlobalVariableSectionIndices;
         std::unordered_map< uint32_t,  CElfStructures::CStringTable > DStringTables;
         std::vector< CElfStructures::SSymbolEntity > DSymbolEntities;
-        std::shared_ptr< CDwarfStructures::SProgram > DDwarfProgram;
+        CDwarfStructures::SProgram DDwarfProgram;
         bool DValidFile;
 
         bool ValidateHeader();
@@ -77,12 +77,8 @@ class CElfLoad{
         size_t SectionHeaderCount() const;
         const CElfStructures::SSectionHeader &SectionHeader(size_t index) const;
         const CDwarfStructures::SLineNumberData &LineNumberData() const{
-            return DDwarfProgram->DLineNumberData;
+            return DDwarfProgram.DLineNumberData;
         };
-        std::shared_ptr< CDwarfStructures::SProgrammaticScope > GetGlobalScopes() const{
-            return DDwarfProgram->DGlobalScope;
-        };
-
         void PrintHeaders();
 
 
