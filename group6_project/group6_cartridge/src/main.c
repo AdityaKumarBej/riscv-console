@@ -18,7 +18,13 @@
 #define MTIMECMP_LOW (*((volatile uint32_t *)0x40000010))
 #define MTIMECMP_HIGH (*((volatile uint32_t *)0x40000014))
 
-//
+__attribute__((always_inline)) inline void csr_enable_interrupts(void){
+  asm volatile ("csrsi mstatus, 0x8");
+}
+
+__attribute__((always_inline)) inline void csr_disable_interrupts(void){
+  asm volatile ("csrci mstatus, 0x8");
+}
 
 volatile int global = 42;
 volatile uint32_t controller_status = 0;
@@ -31,18 +37,20 @@ volatile uint32_t *MODE_REGISTER = (volatile uint32_t *)(0x500F6780);
 volatile uint32_t *MEDIUM_PALETTE = (volatile uint32_t *)(0x500F2000);
 volatile uint32_t *MEDIUM_CONTROL = (volatile uint32_t *)(0x500F5F00);
 volatile uint8_t *MEDIUM_DATA = (volatile uint8_t *)(0x500D0000);
-volatile uint32_t *VIDEO_MODE = (volatile uint32_t *)(0x500FF414);
 
-__attribute__((always_inline)) inline void csr_enable_interrupts(void){
-  asm volatile ("csrsi mstatus, 0x8");
-}
+typedef enum {
+    game_start,
+    game_play,
+    game_pause,
+    game_over
+} gameState_t;
 
-__attribute__((always_inline)) inline void csr_disable_interrupts(void){
-  asm volatile ("csrci mstatus, 0x8");
-}
+gameState_t globalState = game_start;
+mutex_t mutex;
 
 void toggleSpriteColor(void);
 void printError(char* errorMessage);
+int16_t shipVelocity = 0;
 
 void setUpMediumSprites() {
     // Set up sprite data for two sprites (this assumes sprite 0 and sprite 1 are the ones we're moving)
@@ -69,10 +77,11 @@ int moveBox() {
     int y_pos = 0; // Y position of the sprite, now declared
     int countdown = 1;
 
-    *VIDEO_MODE = 1; // VIDEO MODE ON
+    *VIDEO_MEMORY = 1; // VIDEO MODE ON
     beginTheGUI();
 
     while (1) {
+        wait(100);  //set a waiting time
         global = getTicks();
         if(global != last_global){
             controller_status = getControllerStatus();
@@ -151,10 +160,69 @@ void toggleSpriteColor(void) {
         MTIMECMP_HIGH += 1;
     }
 }
+void cmdButtonListener() {
+  switch (globalState) {
+  case game_start: {
+    clearScreen();
+    globalState = game_play;
+    moveBox();
+    break;
+  }
+  case game_play: {
+    globalState = game_pause;
+    addText("PAUSE", 5, 30, 18);
+    break;
+  }
+  case game_pause: {
+    globalState = game_play;
+    break;
+  }
+  }
+}
 
-int main() {
-    addText("Move Box!", 15, 25, 15);
-    addText("Press CMD to start...", 21, 22, 18);
-    // moveBox();
+void buttonClickedListener(uint32_t ctrl) {
+   addText("Button Pressed!", 15, 25, 15);
+}
+
+void buttonReleasedListener(uint32_t ctrl) {
+    addText("Button Released!", 15, 25, 15);
+}
+
+int16_t gamePlay() {
+  
     return 0;
 }
+
+int main() {
+    pthread_mutex_init(&mutex);
+
+    addText("Move Box!", 15, 25, 15);
+    addText("Press CMD to start...", 21, 22, 18);
+
+    setCmdListener(&cmdButtonListener);
+    setOnClickListener(&buttonClickedListener);
+    setOnReleasedListener(&buttonReleasedListener);
+
+    while (1) {
+            wait(100);
+            switch (globalState)
+            {
+            case game_play:
+            {
+                int16_t gameDone = gamePlay();
+                if (gameDone) {
+                    globalState = game_over;
+                    addText((gameDone == 2) ? "YOU WIN!" : "GAME OVER", 9, 27, 18);
+                }
+                break;
+            }
+            case game_over:
+            {
+                break;
+            }
+            default:
+                break;
+            }
+    }
+}
+
