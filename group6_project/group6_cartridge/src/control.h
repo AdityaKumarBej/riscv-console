@@ -36,3 +36,7 @@ int setOnChangedListener(void (*f)(uint32_t) );
 int setCmdListener(void (*f)() );
 
 void wait_for_video_interrupt();
+
+uint32_t rand(void);
+
+void srand(uint32_t seed);
