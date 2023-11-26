@@ -35,6 +35,7 @@ TARGET_NAME = riscv-console-cartridge
 TARGET_OBJS =   $(OBJ_DIR)/main.o               \
                 $(OBJ_DIR)/crt0.o               \
 				$(OBJ_DIR)/memory.o             \
+				$(OBJ_DIR)/game.o             	\
                 $(OBJ_DIR)/startup.o
 
 all: directories $(BIN_DIR)/$(TARGET_NAME)
