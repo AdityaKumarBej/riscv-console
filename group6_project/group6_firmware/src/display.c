@@ -7,7 +7,7 @@
 
 volatile uint32_t *VIDEO_MODE_CONTROL = (volatile uint32_t *)(0x500F6780);
 volatile char *TEXT_MEMORY = (volatile char *)(0x500F4800);
-volatile uint32_t *SPRITE_PALETTES = (volatile uint32_t *)(0x500F2000); //0x500F1000 large // 0x500F2000 medium // 0x500F3000 small
+volatile uint32_t *SPRITE_PALETTES = (volatile uint32_t *)(0x500F3000); //0x500F1000 large // 0x500F2000 medium // 0x500F3000 small
 volatile uint8_t *SMALL_SPRITE_DATA = (volatile uint8_t *)(0x500E0000);
 volatile uint32_t *SMALL_SPRITE_CONTROL = (volatile uint32_t *)(0x500F6300);
 volatile uint8_t *LARGE_SPRITE_DATA = (volatile uint8_t *)(0x50090000);
