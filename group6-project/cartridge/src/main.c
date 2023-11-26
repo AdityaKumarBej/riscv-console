@@ -32,15 +32,15 @@ TContext Otherthread;
 
 int main() {
     int last_global = 42;
-    // setTextMode();
-    // printLine("GAME START!!!");
-    setGraphicsMode();
+    // switchToTextMode();
+    // printText("GAME START!!!");
+    switchToGraphicsMode();
     // Set color to sprite palette
     setColor(0, 0, 0x8000A65F);
     setColor(0, 1, 0x80FFFFFF);
     setColor(0, 2, 0xFFC19A6B);
     setBackgroundColor(0, 0, 0x80C19A6B);
-    setBackgroundSpriteControl(0, calcBackgroundControl(0,0,0,0));
+    drawRectangleWithBackgroundSpriteControl(0, generateBackgroundConfig(0,0,0,0));
 
     int pellet_x = 100;
     int pellet_y = 100;
@@ -49,7 +49,7 @@ int main() {
     int step_size = 3;
     
     drawPellet();
-    setSmallSpriteControl(0, calcSmallSpriteControl(pellet_x,pellet_y,8,8,0));
+    drawRectangleWithSmallSprite(0, generateSmallSpriteConfig(pellet_x,pellet_y,8,8,0));
 
     int control_idx = 1;
     int cur_x = 0;
@@ -71,7 +71,7 @@ int main() {
         if (current_cmd_interrupt != cmd_interrupt){
             pellet_x = genRandom(DISPLAY_WIDTH);
             pellet_y = genRandom(DISPLAY_HEIGHT);
-            shiftSmallSpriteControl(0, pellet_x, pellet_y);
+            moveSmallSprite(0, pellet_x, pellet_y);
             center_x = pellet_x + (snake_width/2);
             center_y = pellet_y + (snake_width/2);
             cmd_interrupt = current_cmd_interrupt;
@@ -120,17 +120,17 @@ int main() {
                 budget += 3;
                 pellet_x = genRandom(DISPLAY_WIDTH);
                 pellet_y = genRandom(DISPLAY_HEIGHT);
-                shiftSmallSpriteControl(0, pellet_x, pellet_y);
+                moveSmallSprite(0, pellet_x, pellet_y);
                 center_x = pellet_x + (snake_width/2);
                 center_y = pellet_y + (snake_width/2);
             }
 
             alive = checkAlive(cur_x, cur_y, budget);
             if (getSmallSpriteControl(control_idx) == 0x0){
-                setSmallSpriteControl(control_idx, calcSmallSpriteControl(cur_x,cur_y,snake_width,snake_width,0));
+                drawRectangleWithSmallSprite(control_idx, generateSmallSpriteConfig(cur_x,cur_y,snake_width,snake_width,0));
             }
             else{
-                shiftSmallSpriteControl(control_idx, cur_x, cur_y);
+                moveSmallSprite(control_idx, cur_x, cur_y);
             }
             control_idx++;
             if (control_idx == budget){
@@ -176,6 +176,6 @@ void drawPellet(){
 }
 
 void gameOver(){
-    setTextMode();
-    printLine("GAME OVER!!!");
+    switchToTextMode();
+    printText("GAME OVER!");
 }

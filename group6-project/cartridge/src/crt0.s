@@ -16,10 +16,10 @@ _start:
     
 
 .section .text, "ax"
-.global getTicks, getStatus, genRandom, setGraphicsMode, setTextMode, setColor, calcSmallSpriteControl, calcLargeSpriteControl, calcBackgroundControl
-.global setSmallSpriteControl, setLargeSpriteControl, setBackgroundSpriteControl, shiftSmallSpriteControl, shiftLargeSpriteControl, 
+.global getTicks, getStatus, genRandom, switchToGraphicsMode, switchToTextMode, setColor, generateSmallSpriteConfig, generateLargeSpriteConfig, generateBackgroundConfig
+.global drawRectangleWithSmallSprite, drawRectangleWithLargeSprite, drawRectangleWithBackgroundSpriteControl, moveSmallSprite, moveLargeSprite, 
 .global getSmallSpriteControl, getLargeSpriteControl, getBackgroundSpriteControl
-.global printLine, setBackgroundColor
+.global printText, setBackgroundColor
 .global InitContext, SwitchContext, getVideoInterruptCount, getCMDInterruptCount
 getTicks:
     li a5, 0
@@ -33,11 +33,11 @@ genRandom:
     li a5, 2
     ecall
     ret
-setGraphicsMode:
+switchToGraphicsMode:
     li a5, 3
     ecall
     ret
-setTextMode:
+switchToTextMode:
     li a5, 4
     ecall
     ret
@@ -45,35 +45,35 @@ setColor:
     li a5, 5
     ecall
     ret
-calcSmallSpriteControl:
+generateSmallSpriteConfig:
     li a5, 6
     ecall
     ret
-calcLargeSpriteControl:
+generateLargeSpriteConfig:
     li a5, 7
     ecall
     ret
-calcBackgroundControl:
+generateBackgroundConfig:
     li a5, 8
     ecall
     ret
-setSmallSpriteControl:
+drawRectangleWithSmallSprite:
     li a5, 9
     ecall
     ret
-setLargeSpriteControl:
+drawRectangleWithLargeSprite:
     li a5, 10
     ecall
     ret
-setBackgroundSpriteControl:
+drawRectangleWithBackgroundSpriteControl:
     li a5, 11
     ecall
     ret
-shiftSmallSpriteControl:
+moveSmallSprite:
     li a5, 12
     ecall
     ret
-shiftLargeSpriteControl:
+moveLargeSprite:
     li a5, 13
     ecall
     ret
@@ -89,7 +89,7 @@ getBackgroundSpriteControl:
     li a5, 16
     ecall
     ret
-printLine:
+printText:
     li a5, 17
     ecall
     ret
