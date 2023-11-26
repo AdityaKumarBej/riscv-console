@@ -84,7 +84,12 @@ uint32_t getBackgroundSpriteControl(int sprite_id){
 }
 
 void printText(char* string){
-    for(int i = 0; string[i] != '\0'; i++){
+    int i;
+
+    for( i = 0; string[i] != '\0'; i++){
         VIDEO_MEMORY[i] = string[i];
+    }
+    for(int j = i ; j < 2304 ; j++){
+         VIDEO_MEMORY[j] = ' ';
     }
 }

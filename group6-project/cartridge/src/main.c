@@ -10,15 +10,10 @@ volatile uint32_t controller_status = 0;
 
 volatile uint32_t *background_sprite_control = (volatile uint32_t *)(0x500F5A00);
 
-// threads
-
 typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
-
 TContext InitContext(uint32_t *stacktop, TEntry entry,void *param);
 void SwitchContext(TContext *oldcontext, TContext newcontext);
-
-
 uint32_t ThreadStack[128];
 TContext Mainthread;
 TContext Otherthread;
@@ -28,46 +23,44 @@ int main() {
     // switchToTextMode();
     // printText("GAME START!!!");
     switchToGraphicsMode();
-    // Set color to sprite palette
-    setColor(0, 0, 0x8000A65F);
-    setColor(0, 1, 0x80FFFFFF);
-    setColor(0, 2, 0xFFC19A6B);
-    setBackgroundColor(0, 0, 0x80C19A6B);
+    setColor(0, 0, 0x80FF0000);
+    setBackgroundColor(0, 0, 0xFF66CCFF);
+
     drawRectangleWithBackgroundSpriteControl(0, generateBackgroundConfig(0,0,0,0));
 
-    int pellet_x = 100;
-    int pellet_y = 100;
-    int center_x = pellet_x + 4;
-    int center_y = pellet_y + 4;
-    int step_size = 3;
+    int foodX = 100;
+    int foodY = 100;
+    int centerXPos = foodX + 4;
+    int centerYPos = foodY + 4;
+    int snakeSpeed = 3;          //modify this to increase or decrease initial speed
     
-    drawPellet();
-    drawRectangleWithSmallSprite(0, generateSmallSpriteConfig(pellet_x,pellet_y,8,8,0));
+    generateFoodBlock();
+    drawRectangleWithSmallSprite(0, generateSmallSpriteConfig(foodX,foodY,8,8,0));
 
     int control_idx = 1;
-    int cur_x = 0;
-    int cur_y = 0;
-    int budget = 5;
-    int alive = 1;
+    int currXPos = 0;
+    int currYPos = 0;
+    int growSnakeParam = 5;
+    int snakeStatus = 1;
     uint32_t current_status = 0;
     uint32_t last_status = 0;
-    const int snake_width = 6;
-    int cmd_interrupt = 0;
-    int current_cmd_interrupt;
+    const int snakeLength = 6;
+    int CMD_INTRR = 0;
+    int CURRENT_CMD_INTRR;
 
     // threads
-    Otherthread = InitContext(ThreadStack + 128, gameOver, NULL);
+    Otherthread = InitContext(ThreadStack + 128, endGame, NULL);
 
-    while (alive == 1) {
+    while (snakeStatus == 1) {
         global = getTicks();
-        current_cmd_interrupt = getCMDInterruptCount();
-        if (current_cmd_interrupt != cmd_interrupt){
-            pellet_x = genRandom(DISPLAY_WIDTH);
-            pellet_y = genRandom(DISPLAY_HEIGHT);
-            moveSmallSprite(0, pellet_x, pellet_y);
-            center_x = pellet_x + (snake_width/2);
-            center_y = pellet_y + (snake_width/2);
-            cmd_interrupt = current_cmd_interrupt;
+        CURRENT_CMD_INTRR = getCMDInterruptCount();
+        if (CURRENT_CMD_INTRR != CMD_INTRR){
+            foodX = genRandom(DISPLAY_WIDTH);
+            foodY = genRandom(DISPLAY_HEIGHT);
+            moveSmallSprite(0, foodX, foodY);
+            centerXPos = foodX + (snakeLength/2);
+            centerYPos = foodY + (snakeLength/2);
+            CMD_INTRR = CURRENT_CMD_INTRR;
         }
         if(global != last_global){
             controller_status = getStatus();
@@ -78,62 +71,62 @@ int main() {
                 current_status = controller_status;
             }
             if(current_status & 0x1){
-                if(cur_x >= step_size){
-                    cur_x -= step_size;
+                if(currXPos >= snakeSpeed){
+                    currXPos -= snakeSpeed;
                 }
                 else{
                     break;
                 }
             }
             if(current_status & 0x2){
-                if( cur_y >= step_size){
-                    cur_y -= step_size;
+                if( currYPos >= snakeSpeed){
+                    currYPos -= snakeSpeed;
                 }
                 else{
                     break;
                 }
             }
             if(current_status & 0x4){
-                if( cur_y <= DISPLAY_HEIGHT - 1 - step_size){
-                    cur_y += step_size;
+                if( currYPos <= DISPLAY_HEIGHT - 1 - snakeSpeed){
+                    currYPos += snakeSpeed;
                 }
                 else{
                     break;
                 }
             }
             if(current_status & 0x8){
-                if(cur_x <= DISPLAY_WIDTH - 1 - step_size){
-                    cur_x += step_size;
+                if(currXPos <= DISPLAY_WIDTH - 1 - snakeSpeed){
+                    currXPos += snakeSpeed;
                 }
                 else{
                     break;
                 }
             }
-            if (checkGetPellet(cur_x, cur_y, center_x, center_y, budget)){
-                budget += 3;
-                pellet_x = genRandom(DISPLAY_WIDTH);
-                pellet_y = genRandom(DISPLAY_HEIGHT);
-                moveSmallSprite(0, pellet_x, pellet_y);
-                center_x = pellet_x + (snake_width/2);
-                center_y = pellet_y + (snake_width/2);
+            if (getFoodStatus(currXPos, currYPos, centerXPos, centerYPos, growSnakeParam)){
+                snakeSpeed += 1;         //increase difficulty
+                growSnakeParam += 3;     //modify this to make the snake grow longer or shorter when consuming food
+                foodX = genRandom(DISPLAY_WIDTH);
+                foodY = genRandom(DISPLAY_HEIGHT);
+                moveSmallSprite(0, foodX, foodY);
+                centerXPos = foodX + (snakeLength/2);
+                centerYPos = foodY + (snakeLength/2);
             }
 
-            alive = checkAlive(cur_x, cur_y, budget);
+            snakeStatus = getSnakeStatus(currXPos, currYPos, growSnakeParam);
             if (getSmallSpriteControl(control_idx) == 0x0){
-                drawRectangleWithSmallSprite(control_idx, generateSmallSpriteConfig(cur_x,cur_y,snake_width,snake_width,0));
+                drawRectangleWithSmallSprite(control_idx, generateSmallSpriteConfig(currXPos,currYPos,snakeLength,snakeLength,0));
             }
             else{
-                moveSmallSprite(control_idx, cur_x, cur_y);
+                moveSmallSprite(control_idx, currXPos, currYPos);
             }
             control_idx++;
-            if (control_idx == budget){
+            if (control_idx == growSnakeParam){
                 control_idx = 1;
             }
             last_global = global;
             last_status = current_status;
         }
     }
-    // Thread
     SwitchContext(&Mainthread, Otherthread);
     return 0;
 }

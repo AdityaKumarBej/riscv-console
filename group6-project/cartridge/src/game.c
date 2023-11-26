@@ -2,18 +2,18 @@
 #include "api.h"
 #include "display.h"
 
-volatile uint8_t *small_sprite_data = (volatile uint8_t *)(0x500E0000);
+volatile uint8_t *SMALL_SPRITE = (volatile uint8_t *)(0x500E0000);
 
-int checkAlive(int cur_x, int cur_y, int budget){
+int getSnakeStatus(int currXPos, int currYPos, int growSnakeParam){
     int alive = 1;
     int x, y;
     uint32_t sprite_control;
-    if (cur_x != 0){
-        for (int i = 1; i < budget; i++){
+    if (currXPos != 0){
+        for (int i = 1; i < growSnakeParam; i++){
             sprite_control = getSmallSpriteControl(i);
             x = ((sprite_control >> 2) & 0x3FF) - SMALL_SPRITE_OFFSET;
             y = ((sprite_control >> 12) & 0x1FF) - SMALL_SPRITE_OFFSET;
-            if (x == cur_x & y == cur_y){
+            if (x == currXPos & y == currYPos){
                 alive = 0;
                 break;
             }
@@ -22,19 +22,19 @@ int checkAlive(int cur_x, int cur_y, int budget){
     return alive;
 }
 
-int checkGetPellet(int cur_x, int cur_y, int center_x, int center_y, int budget){
-    return (cur_x < center_x + 10) & (cur_y < center_y + 10) & (cur_x > center_x - 10) & (cur_y > center_y - 10) & (budget <= 129);
+int getFoodStatus(int currXPos, int currYPos, int centerXPos, int centerYPos, int growSnakeParam){
+    return (currXPos < centerXPos + 10) & (currYPos < centerYPos + 10) & (currXPos > centerXPos - 10) & (currYPos > centerYPos - 10) & (growSnakeParam <= 100);
 }
 
-void drawPellet(){
+void generateFoodBlock(){
     for(int y = 0; y < 16; y++){
         for(int x = 0; x < 16; x++){
-            small_sprite_data[(y<<4) + x] = ((x >= 3) & (x <= 5) & (y >= 0) & (y <= 8)) | ((x >= 2) & (x <= 6) & (y >= 3) & (y <= 5)) ? 1 : 2;
+            SMALL_SPRITE[(y<<4) + x] = ((x >= 3) & (x <= 5) & (y >= 0) & (y <= 8)) | ((x >= 2) & (x <= 6) & (y >= 3) & (y <= 5)) ? 1 : 2;
         }
     }
 }
 
-void gameOver(){
+void endGame(){
     switchToTextMode();
-    printText("GAME OVER!");
+    printText("GAME OVER! HIT RST TO RESTART");
 }
