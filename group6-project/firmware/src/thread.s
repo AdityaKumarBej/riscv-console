@@ -1,12 +1,7 @@
 .section .text, "ax"
 .global InitContext,SwitchContext
 
-#
-# multithreads
-#
-# the thread got the entry function address
 InitContext:
-    # stacktop(stack pointer) in main.c
     addi    a0,a0,-52
     sw	    a1,48(a0)
     sw	    zero,44(a0)
@@ -22,10 +17,7 @@ InitContext:
     sw	    zero,4(a0)
     sw	    zero,0(a0)
     ret
-# 16 registers 4 bytes each
-# we don't need sp and zero
 SwitchContext:
-    # store old stack
     addi	sp,sp,-52
     sw	    ra,48(sp)
     sw	    tp,44(sp)
