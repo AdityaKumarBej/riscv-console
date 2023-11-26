@@ -88,10 +88,15 @@ void initGamePlay() {
         }
     }
     
-    int16_t bid = addBackground(bg);  //sys call implementation - addBackground
+    int16_t bid = addBackground(bg);  //sys call implementation
 
-    
-    addText("Press CMD to start...", 21, 22, 18);
+    uint32_t x = 0, y = 0;
+    ship.x = 0, ship.y = DISPLAY_HEIGHT * 7 / 8;
+    ship.w = SHIP_W;
+    ship.h = SHIP_H;
+    ship.id = drawSprite(ship_s, SHIP_W, SHIP_H, ship.x, ship.y, 0);
+    ship.dead = 0;
+
 }
 
 void shipUpdate() {

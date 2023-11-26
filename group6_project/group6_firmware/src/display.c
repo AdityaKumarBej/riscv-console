@@ -1,5 +1,5 @@
 #include "display.h"
-
+//firmware API implementation
 #define DISPLAY_WIDTH    512
 #define DISPLAY_HEIGHT   288
 #define SMALL_SPRITE_STRIDE 16
@@ -112,8 +112,7 @@ int16_t displayUpdateLargeSprite(int16_t sid, uint32_t ctrl) {
 }
 
 int16_t displayAddBackground(uint8_t *data) {
-    if (backgroundCount > 4) {
-        // Only 5 backgrounds allowed
+    if (backgroundCount > 4) { //allowing only 5 backgrounds
         return -1;
     }
     (*VIDEO_MODE_CONTROL) = (*VIDEO_MODE_CONTROL) | 0x1;
