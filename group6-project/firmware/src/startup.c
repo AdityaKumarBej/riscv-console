@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "video.h"
+#include "utils.h"
 
 extern uint8_t _erodata[];
 extern uint8_t _data[];
@@ -38,11 +39,6 @@ __attribute__((always_inline)) inline void csr_disable_interrupts(void){
 #define MTIMECMP_HIGH   (*((volatile uint32_t *)0x40000014))
 #define CONTROLLER      (*((volatile uint32_t *)0x40000018))
 
-int rand(int high);
-
-uint32_t srand(uint32_t new_seed);
-static unsigned long int next = 1;
-// threads
 typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
 TContext InitContext(uint32_t *stacktop, TEntry entry, void *param);
@@ -56,7 +52,6 @@ volatile uint32_t *INT_ENABLE_REG = (volatile uint32_t *)(0x40000000);
 volatile int VID_INTRR_CNT = 0;    //Count of video interrupts
 volatile int CMD_INTRR_CNT = 0;    //Count of CMD interrupts
 
-// threads
 typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
 
@@ -88,15 +83,14 @@ void c_interrupt_handler(uint32_t mcause){
     global++;
     controller_status = CONTROLLER;
     initializeSpriteControllers();
+    // command button interrupt counter increment
     if (((*INT_PEND_REG) & 0x4) >> 2){
         CMD_INTRR_CNT++;
-        // Clear VIP by setting 1
         (*INT_PEND_REG) |= 0x4;
     }
-    // When video interrupt occurs, increase video interrupt count
+    // video interrupt counter increment
     if (((*INT_PEND_REG) & 0x2) > 0){
         VID_INTRR_CNT++;
-        // Clear VIP by setting 1
         (*INT_PEND_REG) |= 0x2;
     }
 }
@@ -183,39 +177,3 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     }
     return -1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-uint32_t srand(uint32_t new_seed)
-{
-    next = (unsigned)new_seed & 0x7fffffffU;
-}
-
-int rand(int high)
-{
-    next = (next * 1103515245U + 12345U) & 0x7fffffffU;
-    return (uint32_t)next % high;
-}
-
-
-
-
-
-
-
-
-
