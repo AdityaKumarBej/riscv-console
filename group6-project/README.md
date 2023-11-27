@@ -21,4 +21,4 @@ You can find the baseline cartridge code under the folder "baseline_cartridge". 
 an idea on how to develop their games on our OS. There has been few implementations of some apis in the baseline_catridge folder
 
 **********IMPORTANT NOTE**********
-Please note - This code has been tested on the 7a0019e commit version of the risc-v simulator (https://github.com/UCDClassNitta/riscv-console/tree/7a0019e176f57dc0312361aa495856209b902896) 
+Please note - This code has been tested on the 7a0019e commit version of the risc-v simulator (https://github.com/UCDClassNitta/riscv-console/tree/7a0019e176f57dc0312361aa495856209b902896)
