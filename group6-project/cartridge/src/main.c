@@ -8,8 +8,6 @@
 volatile int global = 42;
 volatile uint32_t controller_status = 0;
 
-volatile uint32_t *background_sprite_control = (volatile uint32_t *)(0x500F5A00);
-
 typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
 TContext InitContext(uint32_t *stacktop, TEntry entry,void *param);
@@ -49,7 +47,6 @@ int main() {
     int CURRENT_CMD_INTRR;
     int pause = 0;
 
-    // threads
     Otherthread = InitContext(ThreadStack + 128, endGame, NULL);
 
     while (snakeStatus == 1) {
