@@ -56,11 +56,6 @@ int main() {
         global = getTicks();
         CURRENT_CMD_INTRR = getCMDInterruptCount();
         if (CURRENT_CMD_INTRR != CMD_INTRR){
-            // foodX = genRandom(DISPLAY_WIDTH);
-            // foodY = genRandom(DISPLAY_HEIGHT);
-            // moveSmallSprite(0, foodX, foodY);
-            // centerXPos = foodX + (snakeLength/2);
-            // centerYPos = foodY + (snakeLength/2);
             if(pause==0){ // if pause is untrue, let's pause
                 pause=1;  // let's disable pause
             }
