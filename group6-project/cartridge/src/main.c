@@ -47,6 +47,7 @@ int main() {
     const int snakeLength = 6;
     int CMD_INTRR = 0;
     int CURRENT_CMD_INTRR;
+    int pause = 0;
 
     // threads
     Otherthread = InitContext(ThreadStack + 128, endGame, NULL);
@@ -55,14 +56,20 @@ int main() {
         global = getTicks();
         CURRENT_CMD_INTRR = getCMDInterruptCount();
         if (CURRENT_CMD_INTRR != CMD_INTRR){
-            foodX = genRandom(DISPLAY_WIDTH);
-            foodY = genRandom(DISPLAY_HEIGHT);
-            moveSmallSprite(0, foodX, foodY);
-            centerXPos = foodX + (snakeLength/2);
-            centerYPos = foodY + (snakeLength/2);
+            // foodX = genRandom(DISPLAY_WIDTH);
+            // foodY = genRandom(DISPLAY_HEIGHT);
+            // moveSmallSprite(0, foodX, foodY);
+            // centerXPos = foodX + (snakeLength/2);
+            // centerYPos = foodY + (snakeLength/2);
+            if(pause==0){ // if pause is untrue, let's pause
+                pause=1;  // let's disable pause
+            }
+            else if (pause==1){ // if pause is enabled, let's resume
+                pause=0;
+            }
             CMD_INTRR = CURRENT_CMD_INTRR;
         }
-        if(global != last_global){
+        if(global != last_global && pause==0){
             controller_status = getStatus();
             if (controller_status == 0x0){
                 current_status = last_status;
