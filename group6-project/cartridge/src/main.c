@@ -21,7 +21,7 @@ int main() {
     // switchToTextMode();
     // printText("GAME START!!!");
     switchToGraphicsMode();
-    setColor(0, 0, 0x80FF0000);
+    setSmallSpriteColor(0, 0, 0x80FF0000);
     setBackgroundColor(0, 0, 0xFF66CCFF);
 
     drawRectangleWithBackgroundSpriteControl(0, generateBackgroundConfig(0,0,0,0));

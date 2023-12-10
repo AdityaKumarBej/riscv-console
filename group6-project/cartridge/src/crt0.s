@@ -16,11 +16,11 @@ _start:
     
 
 .section .text, "ax"
-.global getTicks, getStatus, genRandom, switchToGraphicsMode, switchToTextMode, setColor, generateSmallSpriteConfig, generateLargeSpriteConfig, generateBackgroundConfig
+.global getTicks, getStatus, genRandom, switchToGraphicsMode, switchToTextMode, setSmallSpriteColor, generateSmallSpriteConfig, generateLargeSpriteConfig, generateBackgroundConfig
 .global drawRectangleWithSmallSprite, drawRectangleWithLargeSprite, drawRectangleWithBackgroundSpriteControl, moveSmallSprite, moveLargeSprite, 
 .global getSmallSpriteControl, getLargeSpriteControl, getBackgroundSpriteControl
 .global printText, setBackgroundColor
-.global InitContext, SwitchContext, getVideoInterruptCount, getCMDInterruptCount
+.global InitContext, SwitchContext, getVideoInterruptCount, getCMDInterruptCount, generateMediumSpriteConfig, drawRectangleWithMediumSprite, moveMediumSprite, getMediumSpriteControl, setMediumSpriteColor, setLargeSpriteColor, ThreadJoin, ThreadKill, ThreadExit
 getTicks:
     li a5, 0
     ecall
@@ -41,7 +41,7 @@ switchToTextMode:
     li a5, 4
     ecall
     ret
-setColor:
+setSmallSpriteColor:
     li a5, 5
     ecall
     ret
@@ -111,6 +111,42 @@ getVideoInterruptCount:
     ret
 getCMDInterruptCount:
     li a5, 22
+    ecall
+    ret
+generateMediumSpriteConfig:
+    li a5, 23
+    ecall
+    ret
+drawRectangleWithMediumSprite:
+    li a5, 24
+    ecall
+    ret
+moveMediumSprite:
+    li a5, 25
+    ecall
+    ret
+getMediumSpriteControl:
+    li a5, 26
+    ecall
+    ret
+setMediumSpriteColor:
+    li a5, 27
+    ecall
+    ret
+setLargeSpriteColor:
+    li a5, 28
+    ecall
+    ret
+ThreadJoin:
+    li a5, 29
+    ecall
+    ret
+ThreadKill:
+    li a5, 30
+    ecall
+    ret
+ThreadExit:
+    li a5, 31
     ecall
     ret
 .end

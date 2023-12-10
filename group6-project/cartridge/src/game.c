@@ -3,6 +3,8 @@
 #include "display.h"
 
 volatile uint8_t *SMALL_SPRITE = (volatile uint8_t *)(0x500E0000);
+volatile uint8_t *MEDIUM_SPRITE = (volatile uint8_t *)(0x500D0000);
+volatile uint8_t *LARGE_SPRITE = (volatile uint8_t *)(0x50090000);
 
 int getSnakeStatus(int currXPos, int currYPos, int growSnakeParam){
     int alive = 1;
