@@ -138,12 +138,12 @@ void switchToTextMode(void);
  * Displays a line of text on the screen when in text mode.
  * @param string The text string to be displayed.
  */
-void printLine(char* string);
+void printLine(char *string);
 
 //**************************MULTI-THREADING API**************************//
 
 typedef uint32_t *TContext;
-typedef void (*TEntry)(void*);
+typedef void (*TEntry)(void *);
 
 /**
  * Initializes and creates a new thread context.
@@ -174,3 +174,5 @@ int getVideoInterruptCount();
  * @return Number of CMD button interrupts since system start.
  */
 int getCMDInterruptCount();
+
+void initializeSpriteControllers();

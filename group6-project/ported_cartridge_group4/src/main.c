@@ -21,6 +21,7 @@ int main()
     int last_global = 42;
     // switchToTextMode();
     // printText("GAME START!!!");
+    initializeSpriteControllers();
     switchToGraphicsMode();
     setColor(0, 0, 0x80FF0000);
     setBackgroundColor(0, 0, 0xFF66CCFF);

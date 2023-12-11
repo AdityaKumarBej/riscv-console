@@ -3,6 +3,9 @@
 #include "wrapper.h"
 
 volatile uint32_t *MODE_CTRL_REG = (volatile uint32_t *)(MODE_CONTROL_BASE);
+volatile uint32_t *SMALL_SPRITE_CONTROLS[128];
+volatile uint32_t *LARGE_SPRITE_CONTROLS[64];
+volatile uint32_t *BACKGROUND_SPRITE_CONTROLS[5];
 static unsigned long int next = 1;
 // API List
 
@@ -104,56 +107,82 @@ uint32_t generateBackgroundConfig(uint32_t x, uint32_t y, uint32_t z, uint32_t p
  * @param id Identifier for the small sprite.
  * @param addr Configuration value for the sprite control register.
  */
-void drawRectangleWithSmallSprite(int id, uint32_t addr);
+void drawRectangleWithSmallSprite(int id, uint32_t addr)
+{
+    *SMALL_SPRITE_CONTROLS[id] = addr;
+}
 
 /**
  * Sets up a rectangular large sprite's control register.
  * @param id Identifier for the large sprite.
  * @param addr Configuration value for the sprite control register.
  */
-void drawRectangleWithLargeSprite(int id, uint32_t addr);
+void drawRectangleWithLargeSprite(int id, uint32_t addr)
+{
+    *LARGE_SPRITE_CONTROLS[id] = addr;
+}
 
 /**
  * Configures the control register for a background sprite.
  * @param id Identifier for the background sprite.
  * @param addr Configuration value for the background sprite control register.
  */
-void drawRectangleWithBackgroundSpriteControl(int id, uint32_t addr);
+void drawRectangleWithBackgroundSpriteControl(int id, uint32_t addr)
+{
+    *BACKGROUND_SPRITE_CONTROLS[id] = addr;
+}
 
 /**
  * Updates the position of a small sprite.
  * @param id Identifier for the small sprite.
  * @param x, y New coordinates for the sprite's position.
  */
-void moveSmallSprite(int id, uint32_t x, uint32_t y);
+void moveSmallSprite(int id, uint32_t x, uint32_t y)
+{
+    *SMALL_SPRITE_CONTROLS[id] &= 0xFFE00003;
+    *SMALL_SPRITE_CONTROLS[id] |= (((y + 16) << 12) | ((x + 16) << 2));
+}
 
 /**
  * Moves a large sprite to new coordinates.
  * @param id Identifier for the large sprite.
  * @param x, y New coordinates for the sprite's position.
  */
-void moveLargeSprite(int id, uint32_t x, uint32_t y);
+void moveLargeSprite(int id, uint32_t x, uint32_t y)
+{
+    *LARGE_SPRITE_CONTROLS[id] &= 0xFFE00003;
+    *LARGE_SPRITE_CONTROLS[id] |= (((y + 64) << 12) | ((x + 64) << 2));
+}
 
 /**
  * Updates the position of a small sprite.
  * @param sprite_id Identifier for the small sprite.
  * @param x, y New coordinates for the sprite's position.
  */
-uint32_t getSmallSpriteControl(int id);
+uint32_t getSmallSpriteControl(int id)
+{
+    return *SMALL_SPRITE_CONTROLS[id];
+}
 
 /**
  * Moves a large sprite to new coordinates.
  * @param sprite_id Identifier for the large sprite.
  * @param x, y New coordinates for the sprite's position.
  */
-uint32_t getLargeSpriteControl(int id);
+uint32_t getLargeSpriteControl(int id)
+{
+    return *LARGE_SPRITE_CONTROLS[id];
+}
 
 /**
  * Fetches the control value for a background sprite.
  * @param sprite_id Identifier for the background sprite.
  * @return The current control value of the specified background sprite.
  */
-uint32_t getBackgroundSpriteControl(int id);
+uint32_t getBackgroundSpriteControl(int id)
+{
+    return *BACKGROUND_SPRITE_CONTROLS[id];
+}
 
 //**************************SWITCH MODES API**************************//
 
@@ -177,7 +206,10 @@ void switchToTextMode(void)
  * Displays a line of text on the screen when in text mode.
  * @param string The text string to be displayed.
  */
-void printLine(char *string);
+void printLine(char *string)
+{
+    // FIXME:
+}
 
 //**************************MULTI-THREADING API**************************//
 
@@ -191,14 +223,20 @@ typedef void (*TEntry)(void *);
  * @param param Parameter passed to the thread's entry function.
  * @return A new thread context.
  */
-TContext InitContext(uint32_t *stacktop, TEntry entry, void *param);
+TContext InitContext(uint32_t *stacktop, TEntry entry, void *param)
+{
+    return NULL;
+}
 
 /**
  * Switches execution from one thread context to another.
  * @param old Current thread context.
  * @param new New thread context to switch to.
  */
-void SwitchContext(TContext *old, TContext new);
+void SwitchContext(TContext *old, TContext new)
+{
+    // FIXME:
+}
 
 //**************************INTERRUPTS**************************//
 
@@ -218,4 +256,20 @@ int getVideoInterruptCount()
 int getCMDInterruptCount()
 {
     return getCmdInterrupted();
+}
+
+void initializeSpriteControllers()
+{
+    for (int i = 0; i < 128; i++)
+    {
+        SMALL_SPRITE_CONTROLS[i] = (volatile uint32_t *)(SMALL_SPRITE_CONTROL_BASE + i * 4);
+    }
+    for (int i = 0; i < 64; i++)
+    {
+        LARGE_SPRITE_CONTROLS[i] = (volatile uint32_t *)(LARGE_SPRITE_CONTROL_BASE + i * 4);
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        BACKGROUND_SPRITE_CONTROLS[i] = (volatile uint32_t *)(BACKGROUND_CONTROL_BASE + i * 4);
+    }
 }
