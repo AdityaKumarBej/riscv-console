@@ -1,6 +1,9 @@
+#include <stdlib.h>
 #include "api.h"
 #include "wrapper.h"
 
+volatile uint32_t *MODE_CTRL_REG = (volatile uint32_t *)(MODE_CONTROL_BASE);
+static unsigned long int next = 1;
 // API List
 
 //**************************TIMER API**************************//
@@ -29,7 +32,11 @@ uint32_t getStatus(void)
  * @param high The upper bound of the random number range (exclusive).
  * @return A random integer between 0 and high-1.
  */
-uint32_t genRandom(int high);
+uint32_t genRandom(int high)
+{
+    next = (next * 1103515245U + 12345U) & 0x7fffffffU;
+    return (uint32_t)next % high;
+}
 
 //**************************GRAPHICS-API**************************//
 
@@ -39,7 +46,11 @@ uint32_t genRandom(int high);
  * @param entry_id Index within the palette.
  * @param rgba The color value in ARGB format.
  */
-void setColor(int palette_id, int entry_id, uint32_t rgba);
+void setColor(int palette_id, int entry_id, uint32_t rgba)
+{
+    volatile uint32_t *SPRITE_PALETTE = (volatile uint32_t *)(SMALL_SPRITE_PALETTE_BASE + 1024 * palette_id);
+    SPRITE_PALETTE[entry_id] = rgba;
+}
 
 /**
  * Assigns a background color using ARGB values.
@@ -47,7 +58,11 @@ void setColor(int palette_id, int entry_id, uint32_t rgba);
  * @param entry_id Palette index for the color assignment.
  * @param rgba Color value in ARGB format.
  */
-void setBackgroundColor(int palette_id, int entry_id, uint32_t rgba);
+void setBackgroundColor(int palette_id, int entry_id, uint32_t rgba)
+{
+    volatile uint32_t *SPRITE_PALETTE = (volatile uint32_t *)(BACKGROUND_PALETTE_BASE + 1024 * palette_id);
+    SPRITE_PALETTE[entry_id] = rgba;
+}
 
 /**
  * Computes a control value for small sprites based on their dimensions and position.
@@ -56,7 +71,10 @@ void setBackgroundColor(int palette_id, int entry_id, uint32_t rgba);
  * @param p Palette index for the sprite color.
  * @return The calculated control value for the sprite.
  */
-uint32_t generateSmallSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p);
+uint32_t generateSmallSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p)
+{
+    return ((h - 1) << 25) | ((w - 1) << 21) | ((y + 16) << 12) | ((x + 16) << 2) | p;
+}
 
 /**
  * Calculates the control value for a large sprite based on its position and size.
@@ -65,7 +83,10 @@ uint32_t generateSmallSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t 
  * @param p Palette index for the sprite color.
  * @return The control value for configuring the large sprite.
  */
-uint32_t generateLargeSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p);
+uint32_t generateLargeSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p)
+{
+    return ((h - 33) << 26) | ((w - 33) << 21) | ((y + 64) << 12) | ((x + 64) << 2) | p;
+}
 
 /**
  * Determines the control settings for a background based on its position and palette.
@@ -73,7 +94,10 @@ uint32_t generateLargeSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t 
  * @param p Palette index for the background color.
  * @return The control value for configuring the background.
  */
-uint32_t generateBackgroundConfig(uint32_t x, uint32_t y, uint32_t z, uint32_t p);
+uint32_t generateBackgroundConfig(uint32_t x, uint32_t y, uint32_t z, uint32_t p)
+{
+    return ((z << 22) | ((y + 288) << 12) | ((x + 512) << 2)) | p;
+}
 
 /**
  * Configures a rectangular small sprite's control register.
@@ -136,12 +160,18 @@ uint32_t getBackgroundSpriteControl(int id);
 /**
  * Switches the display to a graphics-based mode.
  */
-void switchToGraphicsMode(void);
+void switchToGraphicsMode(void)
+{
+    *MODE_CTRL_REG |= 0x1;
+}
 
 /**
  * Activates text display mode on the screen.
  */
-void switchToTextMode(void);
+void switchToTextMode(void)
+{
+    *MODE_CTRL_REG &= 0x0;
+}
 
 /**
  * Displays a line of text on the screen when in text mode.
