@@ -43,6 +43,9 @@ typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
 TContext InitContext(uint32_t *stacktop, TEntry entry, void *param);
 void SwitchContext(TContext *old, TContext new);
+void ThreadJoin(TContext *first, TContext second);
+void ThreadKill(TContext *thread);
+void ThreadExit(TContext *thread);
 
 extern volatile int global;
 extern volatile uint32_t controller_status;
@@ -114,7 +117,7 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
         switchToTextMode();
     }
     else if (call == 5){
-        setColor(a0, a1, a2);
+        setSmallSpriteColor(a0, a1, a2);
     }
     else if (call == 6){
         uint32_t r = generateSmallSpriteConfig(a0, a1, a2, a3, a4);
@@ -174,6 +177,34 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     }
     else if (call == 22){
         return CMD_INTRR_CNT;
+    }
+    else if (call == 23){
+        uint32_t r = generateMediumSpriteConfig(a0, a1, a2, a3, a4);
+        return r;
+    }
+    else if (call == 24){
+        drawRectangleWithMediumSprite(a0, a1);
+    }
+    else if (call == 25){
+        moveMediumSprite(a0, a1, a2);
+    }
+    else if (call == 26){
+        return getMediumSpriteControl(a0);
+    }
+    else if (call == 27){
+        setMediumSpriteColor(a0, a1, a2);
+    }
+    else if (call == 28){
+        setLargeSpriteColor(a0, a1, a2);
+    }
+    else if (call == 29){
+        ThreadJoin((TContext*) a0, (TContext) a1);
+    }
+    else if (call == 30){
+        ThreadKill((TContext*) a0);
+    }
+    else if (call == 31){
+        ThreadExit((TContext*) a0);
     }
     return -1;
 }
