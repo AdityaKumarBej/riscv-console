@@ -5,7 +5,7 @@
  * Retrieves the current system tick count.
  * @return The number of ticks elapsed since system start.
  */
-uint32_t getTicks(void);
+uint32_t getTicksVal(void);
 
 //**************************I/O CONTROLLER-API**************************//
 
@@ -138,7 +138,7 @@ void switchToTextMode(void);
  * Displays a line of text on the screen when in text mode.
  * @param string The text string to be displayed.
  */
-void printLine(char *string);
+void printText(char *string);
 
 //**************************MULTI-THREADING API**************************//
 

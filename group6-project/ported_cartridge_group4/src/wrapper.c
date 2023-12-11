@@ -14,7 +14,7 @@ static unsigned long int next = 1;
  * Retrieves the current system tick count.
  * @return The number of ticks elapsed since system start.
  */
-uint32_t getTicks(void)
+uint32_t getTicksVal(void)
 {
     return getTicks();
 }
@@ -206,9 +206,18 @@ void switchToTextMode(void)
  * Displays a line of text on the screen when in text mode.
  * @param string The text string to be displayed.
  */
-void printLine(char *string)
+void printText(char *string)
 {
-    // FIXME:
+    int i;
+
+    for (i = 0; string[i] != '\0'; i++)
+    {
+        VIDEO_MEMORY[i] = string[i];
+    }
+    for (int j = i; j < 2304; j++)
+    {
+        VIDEO_MEMORY[j] = ' ';
+    }
 }
 
 //**************************MULTI-THREADING API**************************//

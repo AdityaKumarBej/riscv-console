@@ -53,7 +53,7 @@ int main()
 
     while (snakeStatus == 1)
     {
-        global = getTicks();
+        global = getTicksVal();
         CURRENT_CMD_INTRR = getCMDInterruptCount();
         if (CURRENT_CMD_INTRR != CMD_INTRR)
         {
