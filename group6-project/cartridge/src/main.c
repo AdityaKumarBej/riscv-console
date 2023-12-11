@@ -5,8 +5,16 @@
 #include "display.h"
 #include "game.h"
 
+#define MTIME_LOW       (*((volatile uint32_t *)0x40000008))
+#define MTIME_HIGH      (*((volatile uint32_t *)0x4000000C))
+#define MTIMECMP_LOW    (*((volatile uint32_t *)0x40000010))
+#define MTIMECMP_HIGH   (*((volatile uint32_t *)0x40000014))
+// Timer constants
+#define TIMER_INTERVAL 10000
+
 volatile int global = 42;
 volatile uint32_t controller_status = 0;
+volatile int bg = 1;
 
 typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
@@ -18,6 +26,7 @@ TContext Otherthread;
 
 int main() {
     int last_global = 42;
+    int m_count = MTIME_LOW;
     // switchToTextMode();
     // printText("GAME START!!!");
     switchToGraphicsMode();
@@ -125,7 +134,22 @@ int main() {
             last_global = global;
             last_status = current_status;
         }
+        if (MTIME_LOW >= m_count + TIMER_INTERVAL ){
+            toggleBGColor();
+            m_count = MTIME_LOW;
+        }
     }
     SwitchContext(&Mainthread, Otherthread);
     return 0;
+}
+
+void toggleBGColor() {
+    if(bg==1){
+        setBackgroundColor(0, 0, 0x00000000);
+        bg=2;
+    }
+    else if (bg==2){
+        setBackgroundColor(0, 0, 0xFF66CCFF);
+        bg=1;
+    }
 }
