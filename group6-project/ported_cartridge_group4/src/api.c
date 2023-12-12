@@ -17,8 +17,6 @@ volatile uint32_t *SMALL_SPRITE_CONTROL = (volatile uint32_t *)(0x500F6300);
 //     (*MODE_CONTROL_REG)|=(cmd&0x1);
 // }
 
-// volatile int global = 42; FIXME:
-// volatile uint32_t controller_status = 0;
 volatile uint32_t *MODE_REGISTER = (volatile uint32_t *)(0x500F6780);
 
 volatile char *VIDEO_MEMORY = (volatile char *)(0x50000000 + 0xF4800);
