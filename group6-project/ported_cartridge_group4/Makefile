@@ -39,6 +39,7 @@ TARGET_OBJS =   $(OBJ_DIR)/main.o               \
                 $(OBJ_DIR)/startup.o			\
                 $(OBJ_DIR)/api.o				\
 				$(OBJ_DIR)/game.o             	\
+				$(OBJ_DIR)/thread.o				\
 				$(OBJ_DIR)/wrapper.o
 
 

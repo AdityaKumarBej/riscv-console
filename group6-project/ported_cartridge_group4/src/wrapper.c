@@ -220,33 +220,6 @@ void printText(char *string)
     }
 }
 
-//**************************MULTI-THREADING API**************************//
-
-typedef uint32_t *TContext;
-typedef void (*TEntry)(void *);
-
-/**
- * Initializes and creates a new thread context.
- * @param stacktop Pointer to the top of the thread stack.
- * @param entry Entry point function for the thread.
- * @param param Parameter passed to the thread's entry function.
- * @return A new thread context.
- */
-TContext InitContext(uint32_t *stacktop, TEntry entry, void *param)
-{
-    return NULL;
-}
-
-/**
- * Switches execution from one thread context to another.
- * @param old Current thread context.
- * @param new New thread context to switch to.
- */
-void SwitchContext(TContext *old, TContext new)
-{
-    // FIXME:
-}
-
 //**************************INTERRUPTS**************************//
 
 /**
