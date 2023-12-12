@@ -43,9 +43,6 @@ typedef uint32_t *TContext;
 typedef void (*TEntry)(void*);
 TContext InitContext(uint32_t *stacktop, TEntry entry, void *param);
 void SwitchContext(TContext *old, TContext new);
-void ThreadJoin(TContext *first, TContext second);
-void ThreadKill(TContext *thread);
-void ThreadExit(TContext *thread);
 
 extern volatile int global;
 extern volatile uint32_t controller_status;
@@ -196,15 +193,6 @@ uint32_t c_system_call(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint3
     }
     else if (call == 28){
         setLargeSpriteColor(a0, a1, a2);
-    }
-    else if (call == 29){
-        ThreadJoin((TContext*) a0, (TContext) a1);
-    }
-    else if (call == 30){
-        ThreadKill((TContext*) a0);
-    }
-    else if (call == 31){
-        ThreadExit((TContext*) a0);
     }
     return -1;
 }

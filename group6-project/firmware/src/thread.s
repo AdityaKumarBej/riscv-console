@@ -1,5 +1,5 @@
 .section .text, "ax"
-.global InitContext,SwitchContext, ThreadJoin, ThreadKill, ThreadExit
+.global InitContext,SwitchContext
 
 InitContext:
     addi    a0,a0,-52
@@ -50,19 +50,5 @@ SwitchContext:
     lw	    a4,4(sp)
     lw	    a5,0(sp)
     addi	sp,sp,52
-    ret
-
-ThreadJoin:
-join_loop:
-    lw      a1,0(a0)
-    beqz    a1,join_loop    # Loop until the thread exits (exit flag becomes non-zero)
-    ret
-
-ThreadKill:
-    sw      zero,0(a0)      # Set the exit flag
-    ret
-
-ThreadExit:
-    sw      a0,0(a0)        # Set the exit flag to indicate that the thread is exiting
     ret
 .end

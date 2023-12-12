@@ -25,12 +25,28 @@ uint32_t genRandom(int high);
 //**************************GRAPHICS-API**************************//
 
 /**
- * Defines a color in a sprite's palette using ARGB values.
+ * Defines a color in a small sprite's palette using ARGB values.
  * @param palette_id Identifier for the sprite's palette.
  * @param entry_id Index within the palette.
  * @param rgba The color value in ARGB format.
  */
-void setColor(int palette_id, int entry_id, uint32_t rgba);
+void setSmallSpriteColor(int palette_id, int entry_id, uint32_t rgba);
+
+/**
+ * Defines a color in a medium sprite's palette using ARGB values.
+ * @param palette_id Identifier for the sprite's palette.
+ * @param entry_id Index within the palette.
+ * @param rgba The color value in ARGB format.
+ */
+void setMediumSpriteColor(int palette_id, int entry_id, uint32_t rgba);
+
+/**
+ * Defines a color in a large sprite's palette using ARGB values.
+ * @param palette_id Identifier for the sprite's palette.
+ * @param entry_id Index within the palette.
+ * @param rgba The color value in ARGB format.
+ */
+void setLargeSpriteColor(int palette_id, int entry_id, uint32_t rgba);
 
 /**
  * Assigns a background color using ARGB values.
@@ -48,6 +64,15 @@ void setBackgroundColor(int palette_id, int entry_id, uint32_t rgba);
  * @return The calculated control value for the sprite.
  */
 uint32_t generateSmallSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p);
+
+/**
+ * Computes a control value for medium sprites based on their dimensions and position.
+ * @param x, y Coordinates for the sprite's upper-left corner.
+ * @param w, h Width and height of the sprite.
+ * @param p Palette index for the sprite color.
+ * @return The calculated control value for the sprite.
+ */
+uint32_t generateMediumSpriteConfig(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t p);
 
 /**
  * Calculates the control value for a large sprite based on its position and size.
@@ -74,6 +99,13 @@ uint32_t generateBackgroundConfig(uint32_t x, uint32_t y, uint32_t z, uint32_t p
 void drawRectangleWithSmallSprite(int id, uint32_t addr);
 
 /**
+ * Configures a rectangular medium sprite's control register.
+ * @param id Identifier for the medium sprite.
+ * @param addr Configuration value for the sprite control register.
+ */
+void drawRectangleWithMediumSprite(int id, uint32_t addr);
+
+/**
  * Sets up a rectangular large sprite's control register.
  * @param id Identifier for the large sprite.
  * @param addr Configuration value for the sprite control register.
@@ -95,6 +127,13 @@ void drawRectangleWithBackgroundSpriteControl(int id, uint32_t addr);
 void moveSmallSprite(int id, uint32_t x, uint32_t y);
 
 /**
+ * Updates the position of a medium sprite.
+ * @param id Identifier for the medium sprite.
+ * @param x, y New coordinates for the sprite's position.
+ */
+void moveMediumSprite(int id, uint32_t x, uint32_t y);
+
+/**
  * Moves a large sprite to new coordinates.
  * @param id Identifier for the large sprite.
  * @param x, y New coordinates for the sprite's position.
@@ -107,6 +146,13 @@ void moveLargeSprite(int id, uint32_t x, uint32_t y);
  * @param x, y New coordinates for the sprite's position.
  */
 uint32_t getSmallSpriteControl(int id);
+
+/**
+ * Updates the position of a medium sprite.
+ * @param sprite_id Identifier for the medium sprite.
+ * @param x, y New coordinates for the sprite's position.
+ */
+uint32_t getMediumSpriteControl(int id);
 
 /**
  * Moves a large sprite to new coordinates.
