@@ -207,25 +207,6 @@ TContext InitContext(uint32_t *stacktop, TEntry entry, void *param);
  */
 void SwitchContext(TContext *old, TContext new);
 
-/**
- * Joinds two threads once the first one completes.
- * @param first Current thread context.
- * @param second Second thread to be joined.
- */
-void ThreadJoin(TContext *first, TContext second);
-
-/**
- * Kills a thread.
- * @param thread Current thread context.
- */
-void ThreadKill(TContext *thread);
-
-/**
- * Exits a thread.
- * @param thread Current thread context.
- */
-void ThreadExit(TContext *thread);
-
 //**************************INTERRUPTS**************************//
 
 /**

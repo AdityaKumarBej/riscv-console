@@ -26,7 +26,7 @@ int main() {
     uint32_t current_status = 0;
     uint32_t last_status = 0;
     switchToGraphicsMode();                 //api call to switch between graphic and text mode - refer documentation
-    setColor(0, 0, 0x80FF0000);             //api call to change sprite color - refer documentation
+    setSmallSpriteColor(0, 0, 0x80FF0000);             //api call to change sprite color - refer documentation
     setBackgroundColor(0, 0, 0x00000000);  //api call to change background color - refer documentation
 
     drawRectangleWithBackgroundSpriteControl(0, generateBackgroundConfig(0,0,0,0)); //api call to draw a sprite

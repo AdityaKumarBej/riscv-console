@@ -20,7 +20,7 @@ _start:
 .global drawRectangleWithSmallSprite, drawRectangleWithLargeSprite, drawRectangleWithBackgroundSpriteControl, moveSmallSprite, moveLargeSprite, 
 .global getSmallSpriteControl, getLargeSpriteControl, getBackgroundSpriteControl
 .global printText, setBackgroundColor
-.global InitContext, SwitchContext, getVideoInterruptCount, getCMDInterruptCount, generateMediumSpriteConfig, drawRectangleWithMediumSprite, moveMediumSprite, getMediumSpriteControl, setMediumSpriteColor, setLargeSpriteColor, ThreadJoin, ThreadKill, ThreadExit
+.global InitContext, SwitchContext, getVideoInterruptCount, getCMDInterruptCount, generateMediumSpriteConfig, drawRectangleWithMediumSprite, moveMediumSprite, getMediumSpriteControl, setMediumSpriteColor, setLargeSpriteColor
 getTicks:
     li a5, 0
     ecall
@@ -135,18 +135,6 @@ setMediumSpriteColor:
     ret
 setLargeSpriteColor:
     li a5, 28
-    ecall
-    ret
-ThreadJoin:
-    li a5, 29
-    ecall
-    ret
-ThreadKill:
-    li a5, 30
-    ecall
-    ret
-ThreadExit:
-    li a5, 31
     ecall
     ret
 .end
