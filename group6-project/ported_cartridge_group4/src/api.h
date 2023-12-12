@@ -196,8 +196,6 @@ void setSmallSprite(uint8_t spriteIndex, uint8_t *spriteData,
 void simple_medium_sprite_red(int16_t x, int16_t y, int16_t z);
 void simple_medium_sprite_green(int16_t x, int16_t y, int16_t z);
 
-// extern volatile int global; FIXME:
-// extern volatile uint32_t controller_status;
 extern volatile uint32_t *MODE_REGISTER;
 
 extern volatile char *VIDEO_MEMORY;
