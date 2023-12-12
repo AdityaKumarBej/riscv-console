@@ -596,7 +596,6 @@ bool CRISCVConsole::ProgramFirmware(std::shared_ptr< CDataSource > elfsrc){
         }
         DFirmwareFlash->WriteEnabled(false);
         DCPUCache->FlushRange(DFirmwareMemoryBase, DFirmwareMemorySize);
-        DFirmwareScope = ElfFile.GetGlobalScopes();
         ResetComponents();
         ConstructFirmwareStrings(ElfFile,elfsrc->Container());
         if(CurrentState == to_underlying(EThreadState::Run)){
@@ -634,7 +633,6 @@ uint64_t CRISCVConsole::InsertCartridge(std::shared_ptr< CDataSource > elfsrc){
         }
         DCartridgeFlash->WriteEnabled(false);
         DCPUCache->FlushRange(DCartridgeMemoryBase, DCartridgeMemorySize);
-        DCartridgeScope = ElfFile.GetGlobalScopes();
         DChipset->InsertCartridge(ElfFile.Entry());
         ConstructCartridgeStrings(ElfFile,elfsrc->Container());
         auto EventCycle = DCPU->RetiredInstructionCount();
@@ -710,15 +708,4 @@ void CRISCVConsole::ClearBreakpoints(){
     if(CurrentState == to_underlying(EThreadState::Run)){
         SystemRun();
     }
-}
-
-bool CRISCVConsole::GetActiveScopes(std::vector< std::shared_ptr< CDwarfStructures::SProgrammaticScope > > &scopes) const{
-    auto PC = DCPU->ProgramCounter();
-    if(DFirmwareScope&&(DFirmwareMemoryBase <= PC)&&(PC < DFirmwareMemoryBase + DFirmwareMemorySize)){
-        return DFirmwareScope->GetScopesFromPC(PC,scopes);
-    }
-    else if(DCartridgeScope&&(DCartridgeMemoryBase <= PC)&&(PC < DCartridgeMemoryBase + DCartridgeMemorySize)){
-        return DCartridgeScope->GetScopesFromPC(PC,scopes);
-    }
-    return false;
 }

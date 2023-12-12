@@ -6,9 +6,7 @@
 class CGUIWidgetGTK3 : public virtual CGUIWidget, public std::enable_shared_from_this<CGUIWidget>{
     protected:
         GtkWidget *DWidget;
-        bool DPendingSetCursor;
-        std::shared_ptr< CGUICursor > DCursorToSet;
-
+        
         TGUICalldata DActivateCalldata;
         TGUIActivateEventCallback DActivateCallback;
         
@@ -54,7 +52,6 @@ class CGUIWidgetGTK3 : public virtual CGUIWidget, public std::enable_shared_from
         TGUICalldata DScrollCalldata;
         TGUIScrollEventCallback DScrollCallback;
         
-        static void RealizeEventCallback(GtkWidget *widget, gpointer data);
         static void ActivateEventCallback(GtkWidget *widget, gpointer data);
         static gboolean ButtonPressEventCallback(GtkWidget *widget, GdkEventButton *event, gpointer data);
         static gboolean ButtonReleaseEventCallback(GtkWidget *widget, GdkEventButton *event, gpointer data);
@@ -79,7 +76,6 @@ class CGUIWidgetGTK3 : public virtual CGUIWidget, public std::enable_shared_from
             return DWidget;  
         };
         
-        virtual void Realize(){};
         virtual void Show() override;
         virtual void ShowAll() override;
         
